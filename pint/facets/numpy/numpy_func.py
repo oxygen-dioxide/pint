@@ -419,6 +419,7 @@ set_units_ufuncs = {
     "rad2deg": ("radian", "degree"),
     "logaddexp": ("", ""),
     "logaddexp2": ("", ""),
+    "i0": ("", ""),
 }
 # TODO (#905 follow-up):
 #   while this matches previous behavior, some of these have optional arguments that
@@ -936,6 +937,7 @@ def implement_mul_func(func):
 
 for func_str in (
     "cross",
+    "linalg.cross",
     "dot",
     "vdot",
     "inner",
@@ -1029,6 +1031,8 @@ for func_str, unit_arguments, wrap_output in (
     ("quantile", "a", True),
     ("nanquantile", "a", True),
     ("flip", "m", True),
+    ("flipud", "m", True),
+    ("fliplr", "m", True),
     ("fix", "x", True),
     ("trim_zeros", ["filt"], True),
     ("broadcast_to", ["array"], True),
