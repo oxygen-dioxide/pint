@@ -803,6 +803,27 @@ def _det(a):
     return a.units._REGISTRY.Quantity(np.linalg.det(a._magnitude), units)
 
 
+@implements("angle", "function")
+def _angle(z, deg=False):
+    # The angle is dimensionless, but the input must be multiplicative
+    z = _base_unit_if_needed(z)
+    return (np.angle(z._magnitude, deg=deg) 
+        * z.units._REGISTRY.deg if deg else z.units._REGISTRY.dimensionless)
+
+@implements("cov", "function")
+def _cov(m, y=None, **kwargs):
+    if y is None:
+        return np.cov(m, **kwargs) * get_op_output_unit("delta", m.unit) ** 2
+    else:
+        first_input_units = _get_first_input_units((m,y))
+        result_units = first_input_units._REGISTRY.dimensionless
+        if _is_quantity(m):
+            result_units *= get_op_output_unit("delta", m.unit)
+        if _is_quantity(y):
+            result_units *= get_op_output_unit("delta", y.unit)
+        return np.cov(m, y, **kwargs) * result_units
+
+
 def implement_prod_func(name):
     if np is None:
         return
@@ -947,6 +968,7 @@ for func_str in (
     "vecmat",
     "tensordot",
     "linalg.tensordot",
+    "convolve",
 ):
     implement_mul_func(func_str)
 
@@ -981,6 +1003,7 @@ def implement_solve_func(func):
 for func_str in (
     "linalg.solve",
     "linalg.tensorsolve",
+    "linalg.lstsq",
 ):
     implement_solve_func(func_str)
 
@@ -1087,6 +1110,10 @@ for func_str, unit_arguments, wrap_output in (
     ("resize", "a", True),
     ("reshape", "a", True),
     ("intersect1d", ["ar1", "ar2"], True),
+    ("fill_diagonal", ["a", "val"], True),
+    ("extract", "arr", True),
+    ("unique", "ar", True),
+    ("choose", "choices", True),
 ):
     implement_consistent_units_by_argument(func_str, unit_arguments, wrap_output)
 
@@ -1204,6 +1231,7 @@ for func_str in (
     "count_nonzero",
     "nonzero",
     "result_type",
+    "corrcoef",
 ):
     implement_func("function", func_str, input_units=None, output_unit=None)
 
