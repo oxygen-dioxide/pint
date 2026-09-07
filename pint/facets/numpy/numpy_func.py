@@ -1111,9 +1111,10 @@ for func_str, unit_arguments, wrap_output in (
     ("reshape", "a", True),
     ("intersect1d", ["ar1", "ar2"], True),
     ("fill_diagonal", ["a", "val"], True),
-    ("extract", "arr", True),
-    ("unique", "ar", True),
-    ("choose", "choices", True),
+    ("extract", ["arr"], True),
+    ("unique", ["ar"], True),
+    ("choose", ["choices"], True),
+    ("digitize", ["x", "bins"], True),
 ):
     implement_consistent_units_by_argument(func_str, unit_arguments, wrap_output)
 
@@ -1243,6 +1244,7 @@ for func_str in (
     "triu",
     "nansum",
     "cumsum",
+    "diagflat",
     "nancumsum",
     "linalg.norm",
     "linalg.svdvals",
